@@ -17,6 +17,9 @@
       if (pref !== 'dark' && pref !== 'light') pref = 'light';
       document.documentElement.setAttribute('data-theme', pref);
       document.documentElement.setAttribute('data-theme-pref', pref);
+      /* Land at the top header on open/return — stop the browser from
+         restoring the previous scroll position. */
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     })();
   </script>
 
@@ -450,6 +453,16 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   display: inline-flex; align-items: center; justify-content: center;
 }
 
+/* Mobile nav — collapse section links; keep brand (left) and
+   LinkedIn + theme switch (right). Pill spans full content width. */
+@media (max-width: 720px) {
+  .lp-nav {
+    width: 100%;
+    padding: 8px 10px 8px 18px;
+  }
+  .lp-nav__links a:not(.lp-nav__ext) { display: none; }
+}
+
 /* Theme toggle — pill switch in nav */
 .lp-theme-toggle {
   appearance: none; border: 0; background: transparent; padding: 0; margin: 0;
@@ -743,10 +756,27 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 }
 .lp-project__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 600ms var(--ease-out); }
 .lp-project__media:hover img { transform: scale(1.04); }
-.lp-project__media--tickmill { background: rgba(204, 0, 0, 0.40); }
-:root[data-theme="dark"] .lp-project__media--tickmill { background: rgba(180, 0, 0, 0.30); }
 @media (max-width: 800px) {
   .lp-project, .lp-project--flip { grid-template-columns: 1fr; gap: 22px; }
+  /* On mobile every card stacks copy + button first, then the image */
+  .lp-project--flip .lp-project__meta { order: 0; }
+  .lp-project--flip .lp-project__media { order: 0; }
+}
+
+/* Mobile — a CTA that sits alone on its line spans the full width.
+   Two buttons sharing a row stack vertically and each fill the width too. */
+@media (max-width: 800px) {
+  .lp-sticky__cta,
+  .lp-about__ig {
+    width: 100%;
+    justify-content: center;
+  }
+  .lp-contact__row { flex-direction: column; align-items: stretch; }
+  .lp-contact__btn,
+  .lp-contact__ghost {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ============================================================
@@ -1302,37 +1332,6 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 }
 
 /* ============================================================
-   Coming soon overlay — blurred project cards
-   ============================================================ */
-.lp-project--coming-soon {
-  position: relative;
-  pointer-events: none;
-}
-.lp-project--coming-soon .lp-project__media,
-.lp-project--coming-soon .lp-project__meta {
-  filter: blur(4px);
-  opacity: 0.5;
-  user-select: none;
-}
-.lp-project--coming-soon::after {
-  content: "Under maintenance";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--fg-2);
-  background: color-mix(in srgb, var(--bg) 30%, transparent);
-  border-radius: var(--radius-card);
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* ============================================================
    Reveal on scroll
    ============================================================ */
 .lp-reveal {
@@ -1427,7 +1426,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
         </div>
         <div class="lp-projects">
 
-          <article class="lp-project lp-project--coming-soon lp-reveal">
+          <article class="lp-project lp-reveal">
             <div class="lp-project__meta">
               <div class="lp-project__kicker">01 · Masabi</div>
               <h3 class="lp-project__headline">Seamless fare payments across every mode of transport.</h3>
@@ -1452,12 +1451,12 @@ body, .lp-nav, .lp-chip, .lp-project__media,
                 <span class="lp-sticky__cta-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
               </a>
             </div>
-            <a class="lp-project__media lp-project__media--tickmill" href="work/tickmill.html" aria-label="Open Tickmill">
-              <img src="assets/project-tickmill-hero.png" alt="Tickmill preview" loading="lazy">
+            <a class="lp-project__media" href="work/tickmill.html" aria-label="Open Tickmill">
+              <img src="assets/project-justride-2.png" alt="Tickmill preview" loading="lazy">
             </a>
           </article>
 
-          <article class="lp-project lp-project--coming-soon lp-reveal">
+          <article class="lp-project lp-reveal">
             <div class="lp-project__meta">
               <div class="lp-project__kicker">03 · Hubpay</div>
               <h3 class="lp-project__headline">Sending money abroad — without the friction or the fees.</h3>
@@ -1472,7 +1471,8 @@ body, .lp-nav, .lp-chip, .lp-project__media,
             </a>
           </article>
 
-          <article class="lp-project lp-project--flip lp-project--coming-soon lp-reveal">
+          <!-- Hidden for now — ACE for Unions. Case-study page (work/ace.html) is preserved; uncomment to re-list.
+          <article class="lp-project lp-project--flip lp-reveal">
             <div class="lp-project__meta">
               <div class="lp-project__kicker">04 · ACE for Unions</div>
               <h3 class="lp-project__headline">Digitizing trade work for labor unions.</h3>
@@ -1486,6 +1486,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
               <img src="assets/project-hubpay-2.png" alt="ACE for Unions preview" loading="lazy">
             </a>
           </article>
+          -->
         </div>
       </div>
     </section>
@@ -1607,7 +1608,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           </div>
 
           <div class="lp-about__cta lp-reveal">
-            <a href="https://www.instagram.com/l.arregi/" target="_blank" rel="noopener noreferrer" class="lp-about__ig">
+            <a href="https://instagram.com/larregi" target="_blank" rel="noopener noreferrer" class="lp-about__ig">
               <span class="lp-about__ig-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"></circle></svg></span>
               See more on Instagram
               <span class="lp-about__ig-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"></path></svg></span>
@@ -1648,7 +1649,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           <div class="lp-footer__col">
             <h5>Elsewhere</h5>
             <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-            <a href="https://www.instagram.com/l.arregi/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+            <a href="https://instagram.com/larregi" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
           </div>
           <div class="lp-footer__col">
             <h5>Sections</h5>
@@ -1674,7 +1675,21 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   <script>
   (function () {
     var STORAGE_KEY = 'la-theme';
-    document.documentElement.style.setProperty('--grain-bg', "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>\")");
+
+    /* Pin to the top header on initial load / return navigation, unless the
+       URL deep-links to a section. Done instantly so it never animates. */
+    if (!location.hash) {
+      var _root = document.documentElement;
+      var _prevSB = _root.style.scrollBehavior;
+      _root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      window.addEventListener('load', function () {
+        if (!location.hash) window.scrollTo(0, 0);
+        _root.style.scrollBehavior = _prevSB;
+      });
+    }
+    document.documentElement.style.setProperty('--grain-bg',
+ "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>\")");
 
     // --- Theme toggle (nav) ---
     var SUN = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"></circle><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"></path></svg>";
