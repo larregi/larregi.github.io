@@ -17,6 +17,9 @@
       if (pref !== 'dark' && pref !== 'light') pref = 'light';
       document.documentElement.setAttribute('data-theme', pref);
       document.documentElement.setAttribute('data-theme-pref', pref);
+      /* Land at the top header on open/return — stop the browser from
+         restoring the previous scroll position. */
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     })();
   </script>
 
@@ -1533,6 +1536,19 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   aspect-ratio: 16/10;
   position: relative;
 }
+.cs-bigfig {
+  margin: clamp(40px, 7vw, 88px) 0;
+}
+.cs-bigfig__shot {
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface-alt);
+  aspect-ratio: 5/4;
+  position: relative;
+}
+.cs-bigfig__shot img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
 .cs-hero__cover img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
@@ -2018,7 +2034,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 
   <div class="cs-nav-wrap">
     <nav class="cs-nav" aria-label="Primary">
-      <a class="cs-nav__back" href="../index.html#work">
+      <a class="cs-nav__back" href="../index.html">
         <span class="cs-nav__back-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
         Back to works
       </a>
@@ -2048,7 +2064,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           <div class="cs-hero__breadcrumb lp-reveal">
             <a href="../index.html">Work</a>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-            <span>Tickmill · Product Designer</span>
+            <span>Tickmill · Consultant Product Designer</span>
           </div>
 
           <h1 class="cs-hero__title lp-reveal" data-delay="1">Designing clarity into <em>complex financial flows.</em></h1>
@@ -2084,6 +2100,10 @@ body, .lp-nav, .lp-chip, .lp-project__media,
             </div>
           </div>
         </section>
+
+        <figure class="cs-bigfig lp-reveal">
+          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Context — platform overview &amp; trader landscape</span></div></div>
+        </figure>
 
         <section class="cs-section" id="projects">
           <span class="cs-section__kicker">03 · Projects</span>
@@ -2151,7 +2171,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
               <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-4-light.png" alt="National identity card — capture screen"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-4-dark.png" alt="" aria-hidden="true"></div>
             </figure>
             <figure class="cs-thumb-card">
-              <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">04</span><span class="cs-thumb-title">Document verification — proof of ID &amp; address</span></figcaption>
+              <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">04</span><span class="cs-thumb-title">Document verification</span></figcaption>
               <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-2-light.png" alt="Document verification — proof of ID and address"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-2-dark.png" alt="" aria-hidden="true"></div>
             </figure>
           </div>
@@ -2252,6 +2272,19 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   <script>
   (function () {
     var STORAGE_KEY = 'la-theme';
+
+    /* Pin to the top header on initial load / return navigation, unless the
+       URL deep-links to a section. Done instantly so it never animates. */
+    if (!location.hash) {
+      var root = document.documentElement;
+      var prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      window.addEventListener('load', function () {
+        if (!location.hash) window.scrollTo(0, 0);
+        root.style.scrollBehavior = prev;
+      });
+    }
     document.documentElement.style.setProperty('--grain-bg', "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>\")");
 
     var SUN = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"></circle><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"></path></svg>";

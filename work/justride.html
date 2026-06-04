@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Justride — Case Study · Lander Arregi</title>
-  <meta name="description" content="Unifying ticketing, validation and payment flows for a global mobility platform serving 100+ transit agencies.">
+  <title>Masabi (Justride) — Case Study · Lander Arregi</title>
+  <meta name="description" content="Redesigning Justride — a global white-label transit ticketing platform serving 3–5 million monthly riders, mobile-first and accessibility-driven.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +17,9 @@
       if (pref !== 'dark' && pref !== 'light') pref = 'light';
       document.documentElement.setAttribute('data-theme', pref);
       document.documentElement.setAttribute('data-theme-pref', pref);
+      /* Land at the top header on open/return — stop the browser from
+         restoring the previous scroll position. */
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     })();
   </script>
 
@@ -1533,6 +1536,19 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   aspect-ratio: 16/10;
   position: relative;
 }
+.cs-bigfig {
+  margin: clamp(40px, 7vw, 88px) 0;
+}
+.cs-bigfig__shot {
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface-alt);
+  aspect-ratio: 5/4;
+  position: relative;
+}
+.cs-bigfig__shot img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
 .cs-hero__cover img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
@@ -1652,17 +1668,17 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 }
 .cs-screen {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1.5fr;
+  gap: clamp(32px, 4vw, 56px);
   align-items: center;
 }
-.cs-screen--flip { grid-template-columns: 1fr 1.2fr; }
+.cs-screen--flip { grid-template-columns: 1.5fr 1fr; }
 .cs-screen--flip .cs-screen__notes { order: 2; }
 .cs-screen--flip .cs-screen__shot  { order: 1; }
 .cs-screen__shot {
   border-radius: 22px; overflow: hidden;
   background: var(--surface-alt);
-  aspect-ratio: 4/3; position: relative;
+  aspect-ratio: 3/2; position: relative;
 }
 .cs-screen__shot img {
   width: 100%; height: 100%; object-fit: cover; display: block;
@@ -1893,6 +1909,135 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 }
 :root[data-theme="dark"] .cs-hero::before { opacity: 0.18; }
 
+/* ============================================================
+   Image placeholders — drop real screenshots here
+   ============================================================ */
+.cs-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  background:
+    repeating-linear-gradient(135deg,
+      transparent 0, transparent 11px,
+      color-mix(in srgb, var(--border) 55%, transparent) 11px,
+      color-mix(in srgb, var(--border) 55%, transparent) 12px),
+    var(--surface-alt);
+}
+.cs-ph span {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.06em; line-height: 1.45;
+  text-transform: uppercase; text-align: center;
+  color: var(--fg-2);
+  padding: 8px 14px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  max-width: 86%;
+}
+/* ============================================================
+   Themed screenshots — light/dark variants swap with the theme
+   ============================================================ */
+.cs-shot {
+  position: absolute; inset: 0; z-index: 1;
+  box-sizing: border-box;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
+}
+.cs-shot--dark { display: none; }
+.cs-shot.cs-shot--dark { display: none; }
+:root[data-theme="dark"] .cs-shot.cs-shot--light { display: none; }
+:root[data-theme="dark"] .cs-shot.cs-shot--dark  { display: block; }
+
+/* Transparent device composites float on a dynamic red backdrop.
+   Light: #CC0000 @ 40% · Dark: #B40000 @ 30%. */
+.cs-redbg { background: rgba(204, 0, 0, 0.40); }
+:root[data-theme="dark"] .cs-redbg { background: rgba(180, 0, 0, 0.30); }
+.cs-redbg .cs-shot {
+  object-fit: contain;
+  object-position: center;
+  padding: 0;
+}
+
+/* ============================================================
+   Onboarding screens — 4-up labelled flow, fully displayed
+   ============================================================ */
+.cs-thumbs {
+  margin-top: clamp(28px, 4vw, 44px);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(18px, 2.4vw, 32px);
+}
+.cs-thumb-card {
+  margin: 0;
+  display: flex; flex-direction: column;
+  gap: 16px;
+}
+.cs-thumb-cap {
+  display: flex; align-items: baseline; gap: 10px;
+  padding-left: 2px;
+}
+.cs-thumb-step {
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--mint-ink); flex: none;
+}
+:root[data-theme="dark"] .cs-thumb-step { color: var(--mint); }
+.cs-thumb-title {
+  font-size: clamp(15px, 1.3vw, 17px); font-weight: 600;
+  letter-spacing: -0.01em; line-height: 1.25;
+  color: var(--fg); text-wrap: balance;
+}
+.cs-thumb {
+  position: relative; margin: 0;
+  aspect-ratio: 720 / 1688;
+  border-radius: 18px; overflow: hidden;
+  background: var(--surface-alt);
+}
+.cs-thumb::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent) inset;
+  pointer-events: none;
+}
+@media (max-width: 800px) { .cs-thumbs { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .cs-thumbs { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   Outcomes — takeaway list with mint dash markers
+   ============================================================ */
+.cs-takeaways {
+  list-style: none; padding: 0; margin: clamp(8px, 2vw, 20px) 0 0;
+  display: flex; flex-direction: column;
+}
+.cs-takeaway {
+  display: grid; grid-template-columns: 26px 1fr; gap: 12px;
+  align-items: start;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  font-size: clamp(16px, 1.4vw, 19px);
+  line-height: 1.55;
+  color: var(--fg-1);
+}
+.cs-takeaway:last-child { border-bottom: 1px solid var(--border); }
+.cs-takeaway__dash {
+  width: 18px; height: 2px; border-radius: 2px;
+  background: var(--mint); margin-top: 0.65em;
+}
+.cs-takeaway b { color: var(--fg); font-weight: 600; }
+@media (max-width: 560px) {
+  .cs-takeaway { grid-template-columns: 20px 1fr; gap: 10px; }
+}
+
+/* ============================================================
+   Masabi impact — prominent stat + audience groups
+   ============================================================ */
+.cs-bigstat { margin: clamp(4px,1.5vw,16px) 0 clamp(28px,4vw,44px); }
+.cs-bigstat__v { font-size: clamp(64px,13vw,148px); font-weight:800; letter-spacing:-0.03em; line-height:0.92; color:var(--mint-ink); }
+:root[data-theme="dark"] .cs-bigstat__v { color: var(--mint); }
+.cs-bigstat__k { font-size: clamp(15px,1.4vw,18px); line-height:1.5; color:var(--fg-1); margin-top:12px; max-width:46ch; }
+.cs-impact-group { margin-top: clamp(28px,4vw,48px); }
+.cs-impact-group__label { font-size:12px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--mint-ink); margin:0 0 6px; }
+:root[data-theme="dark"] .cs-impact-group__label { color: var(--mint); }
+
   </style>
 </head>
 <body>
@@ -1900,7 +2045,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 
   <div class="cs-nav-wrap">
     <nav class="cs-nav" aria-label="Primary">
-      <a class="cs-nav__back" href="../index.html#work">
+      <a class="cs-nav__back" href="../index.html">
         <span class="cs-nav__back-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
         Back to works
       </a>
@@ -1921,8 +2066,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
             <li><a href="#context" class="cs-index__item" data-spy="context"><span class="cs-index__num">02</span>Context</a></li>
             <li><a href="#process" class="cs-index__item" data-spy="process"><span class="cs-index__num">03</span>Process</a></li>
             <li><a href="#solution" class="cs-index__item" data-spy="solution"><span class="cs-index__num">04</span>Solution</a></li>
-            <li><a href="#outcomes" class="cs-index__item" data-spy="outcomes"><span class="cs-index__num">05</span>Outcomes</a></li>
-            <li><a href="#gallery" class="cs-index__item" data-spy="gallery"><span class="cs-index__num">06</span>Gallery</a></li>
+            <li><a href="#impact" class="cs-index__item" data-spy="impact"><span class="cs-index__num">05</span>Impact</a></li>
         </ul>
       </aside>
 
@@ -1931,91 +2075,95 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           <div class="cs-hero__breadcrumb lp-reveal">
             <a href="../index.html">Work</a>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-            <span>Masabi · Justride</span>
+            <span>Masabi · Justride · Senior Product Designer</span>
           </div>
 
-          <h1 class="cs-hero__title lp-reveal" data-delay="1">Seamless fare payments across every<em> mode of transport.</em></h1>
-          <p class="cs-hero__sub lp-reveal" data-delay="2">Helped a global mobility platform unify ticketing, validation and payment flows for 100+ transit agencies — research, prototyping and an end-to-end UI refresh that scaled across web, mobile and gate hardware.</p>
+          <h1 class="cs-hero__title lp-reveal" data-delay="1">Seamless fare payments across <em>every mode of transport.</em></h1>
+          <p class="cs-hero__sub lp-reveal" data-delay="2">Led the redesign of a global white-label ticketing platform serving 3–5 million active users monthly — mobile-first, accessibility-driven, and built to be branded by transit agencies worldwide.</p>
 
           <div class="cs-hero__meta lp-reveal" data-delay="3">
-            <div><span class="cs-hero__meta-k">Project</span><span class="cs-hero__meta-v">Masabi</span></div>
-            <div><span class="cs-hero__meta-k">Year</span><span class="cs-hero__meta-v">2023 — 2025</span></div>
+            <div><span class="cs-hero__meta-k">Client</span><span class="cs-hero__meta-v">Masabi · Justride</span></div>
+            <div><span class="cs-hero__meta-k">Year</span><span class="cs-hero__meta-v">2023 — 2024</span></div>
             <div><span class="cs-hero__meta-k">Role</span><span class="cs-hero__meta-v">Senior Product Designer</span></div>
-            <div><span class="cs-hero__meta-k">Duration</span><span class="cs-hero__meta-v">14 months</span></div>
+            <div><span class="cs-hero__meta-k">Duration</span><span class="cs-hero__meta-v">17 months</span></div>
           </div>
 
-          <div class="cs-hero__cover lp-reveal" data-delay="3">
-            <img src="../assets/project-justride-2.png" alt="Justride product overview">
+          <div class="cs-hero__cover cs-redbg lp-reveal" data-delay="3">
+            <div class="cs-ph"><span>Justride — multi-viewport ticketing · browser + native</span></div>
           </div>
         </section>
 
         <section class="cs-section" id="context">
           <span class="cs-section__kicker">02 · Context</span>
-          <h2 class="cs-section__h lp-reveal">A patchwork of fare flows holding back a global platform.</h2>
-          <p class="cs-section__lede lp-reveal">Masabi's Justride platform powers ticketing for transit agencies from New York to Sydney. After eight years of feature growth, the experience had drifted — different agencies were running on visually inconsistent flows, and shared components were lagging behind product needs.</p>
+          <h2 class="cs-section__h lp-reveal">A platform serving millions, built to fit any agency.</h2>
+          <p class="cs-section__lede lp-reveal">Justride is an enterprise-grade, cloud-native ticketing platform that unifies mobile ticketing, contactless payments and account-based ticketing into a single product — used by transit agencies worldwide, serving 3–5 million active users every month.</p>
 
           <div class="cs-prose lp-reveal">
             <div>
-              <p>I joined as the design lead on a long-arc effort to unify the ticketing, validation, and payment experiences across web, mobile, and gate hardware. The work touched a dozen squads and had to be coordinated with rolling rollouts across 100+ agencies, each with their own brand, fare rules, and rider research.</p>
-              <p>The problem wasn't a redesign — it was alignment. We needed to make consistent decisions that respected the constraints of every agency, while pulling the product into a single, modern visual and interaction language.</p>
+              <p>I joined as design lead on a broad redesign effort, approaching it mobile-first with a clear goal: deliver a ticketing app that any transit agency could brand and deploy as their own. With such a diverse global user base, accessibility, ease of use and an intuitive system weren't nice-to-haves — they were foundational constraints.</p>
+              <p>One key challenge shaped the process throughout: our direct clients were the transit agencies, not the passengers. That meant rider insights came primarily through stakeholder meetings and agency-provided analytics, making it essential to define success metrics early and measure rigorously at every stage.</p>
             </div>
             <div class="cs-stats">
-              <div class="cs-stat"><span class="cs-stat__v">100+</span><span class="cs-stat__k">Transit agencies running on Justride globally</span></div>
-              <div class="cs-stat"><span class="cs-stat__v">12</span><span class="cs-stat__k">Product squads coordinated across the rollout</span></div>
-              <div class="cs-stat"><span class="cs-stat__v">3</span><span class="cs-stat__k">Surfaces unified: web, mobile, validator hardware</span></div>
-              <div class="cs-stat"><span class="cs-stat__v">200M+</span><span class="cs-stat__k">Annual rider journeys touched by the redesign</span></div>
+              <div class="cs-stat"><span class="cs-stat__v">3–5M</span><span class="cs-stat__k">Active users every month across global markets</span></div>
+              <div class="cs-stat"><span class="cs-stat__v">Mobile</span><span class="cs-stat__k">First — across browser and native environments</span></div>
+              <div class="cs-stat"><span class="cs-stat__v">White-label</span><span class="cs-stat__k">Any agency can brand and deploy it as their own</span></div>
+              <div class="cs-stat"><span class="cs-stat__v">A11y</span><span class="cs-stat__k">Accessibility as a foundational constraint</span></div>
             </div>
           </div>
         </section>
 
+        <figure class="cs-bigfig lp-reveal">
+          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Context — platform overview &amp; rider landscape</span></div></div>
+        </figure>
+
         <section class="cs-section" id="process">
           <span class="cs-section__kicker">03 · Process</span>
-          <h2 class="cs-section__h lp-reveal">From rider research to a shared component library.</h2>
-          <p class="cs-section__lede lp-reveal">We worked in four overlapping phases. Each one fed the next — and each shipped something usable, so we never went dark for long.</p>
+          <h2 class="cs-section__h lp-reveal">A four-stage structure built for an indirect user relationship.</h2>
+          <p class="cs-section__lede lp-reveal">Our direct clients were the transit agencies, not the passengers — so the process leaned on success metrics defined upfront and measured rigorously at every stage.</p>
 
           <div class="cs-phases">
 
           <div class="cs-phase lp-reveal">
-            <span class="cs-phase__n">Phase 01</span>
-            <h3 class="cs-phase__h">Discovery &amp; audit</h3>
-            <p class="cs-phase__p">Reviewed analytics, support tickets and 14 of the highest-traffic agency flows. Held interviews with riders in three cities and shadowed gate staff during peak commute.</p>
+            <span class="cs-phase__n">Stage 01</span>
+            <h3 class="cs-phase__h">Analysis &amp; metric definition</h3>
+            <p class="cs-phase__p">Reviewed existing data, agency research and usage patterns across platform features. Defined success metrics upfront — satisfaction scores, usefulness scores, completion rates and abandonment rates — so every design decision had something to be measured against.</p>
             <ul class="cs-phase__list">
-              <li>Research</li>
-              <li>Heuristic audit</li>
-              <li>Field study</li>
+              <li>Data review</li>
+              <li>Metric definition</li>
+              <li>Usage patterns</li>
             </ul>
           </div>
 
           <div class="cs-phase lp-reveal">
-            <span class="cs-phase__n">Phase 02</span>
-            <h3 class="cs-phase__h">IA &amp; flow rewiring</h3>
-            <p class="cs-phase__p">Mapped 38 entry points down to seven canonical task flows. Pruned dead ends, surfaced the most-used fare types, and aligned naming with how riders actually describe their journeys.</p>
+            <span class="cs-phase__n">Stage 02</span>
+            <h3 class="cs-phase__h">Iterative design collaboration</h3>
+            <p class="cs-phase__p">Worked closely within a multidisciplinary team across design, product and engineering. Iterated continuously, keeping agency requirements and passenger behaviour in parallel focus throughout.</p>
             <ul class="cs-phase__list">
-              <li>IA</li>
-              <li>Flows</li>
-              <li>Card sort</li>
+              <li>Cross-functional</li>
+              <li>Continuous iteration</li>
+              <li>Dual focus</li>
             </ul>
           </div>
 
           <div class="cs-phase lp-reveal">
-            <span class="cs-phase__n">Phase 03</span>
-            <h3 class="cs-phase__h">Prototyping &amp; testing</h3>
-            <p class="cs-phase__p">Built Figma prototypes for the hero flows — buying, transferring, validating — and tested with 28 riders across age, ability and tech-comfort segments. Three rounds, with measurable improvement each pass.</p>
+            <span class="cs-phase__n">Stage 03</span>
+            <h3 class="cs-phase__h">Validation through user testing</h3>
+            <p class="cs-phase__p">Tested designs with real users to pressure-test flows, surface friction and validate that the experience held up across the range of markets and agency brands we were designing for.</p>
             <ul class="cs-phase__list">
-              <li>Prototypes</li>
-              <li>Usability</li>
-              <li>3 rounds</li>
+              <li>User testing</li>
+              <li>Friction surfacing</li>
+              <li>Cross-market</li>
             </ul>
           </div>
 
           <div class="cs-phase lp-reveal">
-            <span class="cs-phase__n">Phase 04</span>
-            <h3 class="cs-phase__h">Design system &amp; rollout</h3>
-            <p class="cs-phase__p">Codified the new patterns into a Figma library and a Storybook component set. Worked alongside frontend leads to migrate squads incrementally — no big-bang launch, no broken agencies.</p>
+            <span class="cs-phase__n">Stage 04</span>
+            <h3 class="cs-phase__h">Measurement</h3>
+            <p class="cs-phase__p">Tracked the defined success metrics post-launch — completion rates, abandonment rates, satisfaction and usefulness scores — to evaluate the effectiveness of the new designs and feed learnings back into the next cycle.</p>
             <ul class="cs-phase__list">
-              <li>Design system</li>
-              <li>Storybook</li>
-              <li>Migration</li>
+              <li>Post-launch tracking</li>
+              <li>Effectiveness</li>
+              <li>Feedback loop</li>
             </ul>
           </div>
           </div>
@@ -2023,88 +2171,77 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 
         <section class="cs-section" id="solution">
           <span class="cs-section__kicker">04 · Solution</span>
-          <h2 class="cs-section__h lp-reveal">Three interlocking surfaces, one rider experience.</h2>
-          <p class="cs-section__lede lp-reveal">The redesigned product met the rider wherever they were: a fast web checkout, a confident mobile app, and gate hardware that felt instant. Below, the three pieces in detail.</p>
+          <h2 class="cs-section__h lp-reveal">White-label by design, consistent by principle.</h2>
+          <p class="cs-section__lede lp-reveal">The redesigned Justride platform delivers a responsive, multi-viewport experience — available in both browser and native mobile environments — that agencies can brand entirely as their own.</p>
 
           <div class="cs-screens">
             <article class="cs-screen lp-reveal">
               <div class="cs-screen__notes">
-                <span class="cs-screen__tag">Mobile app</span>
-                <h3 class="cs-screen__h">A wallet rebuilt around the journey, not the ticket.</h3>
-                <p class="cs-screen__p">Riders manage active passes, plan trips and reload balance from a single screen. Validation now lives a single tap away, and transfers happen automatically when the rider is in a valid window.</p>
+                <span class="cs-screen__tag">White-label theming</span>
+                <h3 class="cs-screen__h">A Figma variables system that makes theming fast and testable.</h3>
+                <p class="cs-screen__p">Agencies can brand and deploy the platform as their own without rebuilding from scratch. A variables-driven theming system makes every customisation fast to apply and easy to validate before it ships.</p>
               </div>
-              <div class="cs-screen__shot">
-                <img src="../assets/project-justride-1.png" alt="Justride mobile wallet">
-              </div>
+              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Figma variables — agency theming system</span></div></div>
             </article>
 
             <article class="cs-screen cs-screen--flip lp-reveal">
-              <div class="cs-screen__shot">
-                <img src="../assets/project-justride-2.png" alt="Justride pass purchase">
-              </div>
+              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Responsive — browser + native viewports</span></div></div>
               <div class="cs-screen__notes">
-                <span class="cs-screen__tag">Web checkout</span>
-                <h3 class="cs-screen__h">A two-step purchase that respects every fare rule.</h3>
-                <p class="cs-screen__p">Riders pick a pass and pay, full stop. Behind the scenes, agency-specific eligibility, capping and family-group logic runs invisibly. We cut checkout-screen count from 6 → 2 without losing a single fare type.</p>
+                <span class="cs-screen__tag">Responsive, multi-viewport</span>
+                <h3 class="cs-screen__h">One experience, consistent across browser and native.</h3>
+                <p class="cs-screen__p">The platform adapts across viewports and environments — browser and native mobile alike — so the ticketing experience stays coherent however and wherever a rider reaches it.</p>
               </div>
             </article>
 
             <article class="cs-screen lp-reveal">
               <div class="cs-screen__notes">
-                <span class="cs-screen__tag">Validator hardware</span>
-                <h3 class="cs-screen__h">Gate feedback fast enough to keep the queue moving.</h3>
-                <p class="cs-screen__p">A new validator UI surfaces accept / reject decisions in under 350 ms with motion that's legible from a distance. Staff get a calmer override screen, and edge-case states (low signal, multi-pass) finally have a designed home.</p>
+                <span class="cs-screen__tag">Accessibility</span>
+                <h3 class="cs-screen__h">Light and dark themes that stay fully usable.</h3>
+                <p class="cs-screen__p">Accessibility is baked into the approach rather than retrofitted, so both light and dark themes remain fully usable no matter how an agency customises them.</p>
               </div>
-              <div class="cs-screen__shot">
-                <img src="../assets/project-justride-2.png" alt="Justride validator screen" style="object-position: center bottom;">
-              </div>
+              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Light &amp; dark — accessible by default</span></div></div>
             </article>
           </div>
         </section>
 
-        <section class="cs-section" id="outcomes">
-          <span class="cs-section__kicker">05 · Outcomes</span>
-          <h2 class="cs-section__h lp-reveal">Measured against rider time, support load, and dev velocity.</h2>
-          <p class="cs-section__lede lp-reveal">The redesign rolled out to 28 agencies in its first nine months. The numbers below are aggregated across them — the wins were consistent enough that the rollout sequence kept accelerating.</p>
+        <figure class="cs-bigfig lp-reveal">
+          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Solution — white-label system across viewports</span></div></div>
+        </figure>
 
-          <div class="cs-outcomes lp-reveal">
-            <div class="cs-outcome"><span class="cs-outcome__v"><em>−42%</em></span><span class="cs-outcome__k">Time to complete a first ticket purchase, across web + mobile</span></div>
-            <div class="cs-outcome"><span class="cs-outcome__v"><em>+31%</em></span><span class="cs-outcome__k">Mobile-first riders completing checkout without contacting support</span></div>
-            <div class="cs-outcome"><span class="cs-outcome__v"><em>3.4×</em></span><span class="cs-outcome__k">Faster build velocity once squads adopted the new component set</span></div>
+        <section class="cs-section" id="impact">
+          <span class="cs-section__kicker">05 · Impact</span>
+          <h2 class="cs-section__h lp-reveal">A redesign felt by millions, adopted by agencies worldwide.</h2>
+
+          <div class="cs-bigstat lp-reveal">
+            <div class="cs-bigstat__v">3–5M</div>
+            <div class="cs-bigstat__k">Active users every month — every improvement ships to millions of riders who experience a smoother journey without ever noticing the work behind it.</div>
           </div>
 
-          <figure class="cs-quote lp-reveal">
-            <span class="cs-quote__mark" aria-hidden="true">"</span>
-            <blockquote class="cs-quote__body">The new system gave us back time. We stopped re-designing the same screens for every agency, and started arguing about the right things — the actual rider experience.</blockquote>
-            <figcaption class="cs-quote__by">
-              <span class="cs-quote__avatar">MR</span>
-              <div>
-                <div class="cs-quote__name">Maria Reilly</div>
-                <div class="cs-quote__role">Director of Product, Masabi</div>
-              </div>
-            </figcaption>
-          </figure>
-        </section>
-
-        <section class="cs-section" id="gallery">
-          <span class="cs-section__kicker">06 · Gallery</span>
-          <h2 class="cs-section__h lp-reveal">A walk through the shipped work.</h2>
-
-          <div class="cs-gallery">
-            <figure class="cs-gallery__item cs-gallery__a lp-reveal"><img src="../assets/project-justride-2.png" alt="Hero gallery shot"></figure>
-            <figure class="cs-gallery__item cs-gallery__b lp-reveal" data-delay="1"><img src="../assets/project-justride-1.png" alt="Mobile flow"></figure>
-            <figure class="cs-gallery__item cs-gallery__c lp-reveal" data-delay="1"><img src="../assets/project-justride-1.png" alt="Component swatches"></figure>
-            <figure class="cs-gallery__item cs-gallery__d lp-reveal" data-delay="2"><img src="../assets/project-justride-2.png" alt="Validator detail"></figure>
-            <figure class="cs-gallery__item cs-gallery__e lp-reveal" data-delay="2"><img src="../assets/project-justride-2.png" alt="Edge case state" style="object-position: right center;"></figure>
+          <div class="cs-impact-group lp-reveal">
+            <p class="cs-impact-group__label">For riders</p>
+            <ul class="cs-takeaways">
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>Every improvement reaches millions</b> — a smoother journey for people who never notice the design work behind it.</span></li>
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>Designed for a genuinely wide demographic range</b> — different ages, digital literacy levels, languages and accessibility needs across multiple markets.</span></li>
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>Accessibility built in from the start</b> — not retrofitted, so the experience holds up for the riders who need it most.</span></li>
+            </ul>
           </div>
 
-          <a class="cs-next lp-reveal" href="./tickmill.html">
-            <div>
-              <div class="cs-next__kicker">Next project · 02</div>
-              <h3 class="cs-next__title">Bringing transparency to premium trading products.</h3>
-            </div>
-            <span class="cs-next__arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
-          </a>
+          <div class="cs-impact-group lp-reveal">
+            <p class="cs-impact-group__label">For transit agencies</p>
+            <ul class="cs-takeaways">
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>A white-label platform they can brand and deploy as their own</b> — without rebuilding from scratch.</span></li>
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>Flexible enough to respond to new feature and service demands quickly</b> — keeping pace with each agency's roadmap.</span></li>
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>A Figma variables theming system</b> — lets agencies customise freely while keeping accessibility intact across light and dark themes.</span></li>
+            </ul>
+          </div>
+
+          <div class="cs-impact-group lp-reveal">
+            <p class="cs-impact-group__label">For the team</p>
+            <ul class="cs-takeaways">
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>A repeatable four-stage design process</b> — with predefined success metrics: satisfaction scores, usefulness scores, completion rates and abandonment rates.</span></li>
+              <li class="cs-takeaway"><span class="cs-takeaway__dash"></span><span><b>A framework that outlives the project</b> — and continues to guide future iterations.</span></li>
+            </ul>
+          </div>
         </section>
       </div>
     </div>
@@ -2146,6 +2283,19 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   <script>
   (function () {
     var STORAGE_KEY = 'la-theme';
+
+    /* Pin to the top header on initial load / return navigation, unless the
+       URL deep-links to a section. Done instantly so it never animates. */
+    if (!location.hash) {
+      var root = document.documentElement;
+      var prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      window.addEventListener('load', function () {
+        if (!location.hash) window.scrollTo(0, 0);
+        root.style.scrollBehavior = prev;
+      });
+    }
     document.documentElement.style.setProperty('--grain-bg', "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>\")");
 
     var SUN = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"></circle><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"></path></svg>";
