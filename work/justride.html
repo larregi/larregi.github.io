@@ -1346,6 +1346,108 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 .cs-nav__back-arrow svg { display: block; }
 
 /* ============================================================
+   Theme-availability toast — appears at 30% scroll, points
+   at the theme toggle, self-dismisses after 8s. Once/session.
+   ============================================================ */
+.cs-toast {
+  position: fixed;
+  top: 0; right: 40px;
+  z-index: 95;
+  width: 318px;
+  max-width: calc(100vw - 32px);
+  display: flex; align-items: flex-start; gap: 13px;
+  padding: 15px 15px 15px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transform-origin: top right;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.97);
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+.cs-toast.is-in {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+/* Pointer arrow aimed up at the theme toggle */
+.cs-toast__arrow {
+  position: absolute;
+  top: -7px; right: 22px;
+  width: 13px; height: 13px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+  border-top-left-radius: 3px;
+}
+.cs-toast__icon {
+  flex: 0 0 auto;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--mint-soft);
+  color: var(--mint-ink);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.cs-toast__body { flex: 1 1 auto; min-width: 0; padding-top: 1px; }
+.cs-toast__title {
+  margin: 0;
+  font-size: 13.5px; font-weight: 600; line-height: 1.42;
+  letter-spacing: -0.006em; color: var(--fg);
+  text-wrap: pretty;
+}
+.cs-toast__hint {
+  margin: 4px 0 0;
+  font-size: 12px; line-height: 1.4; color: var(--fg-2);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.cs-toast__hint svg { color: var(--mint); }
+/* Close button wrapped by a depleting countdown ring */
+.cs-toast__close {
+  position: relative;
+  flex: 0 0 auto;
+  width: 30px; height: 30px;
+  margin: -2px -2px 0 0;
+  padding: 0; border: 0; background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 9999px;
+  color: var(--fg-2);
+  transition: color var(--dur-micro) var(--ease-out),
+              background var(--dur-micro) var(--ease-out);
+}
+.cs-toast__close:hover { color: var(--fg); background: var(--surface-alt); }
+.cs-toast__close:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+.cs-toast__close > svg:not(.cs-toast__ring) { position: relative; z-index: 1; flex: 0 0 auto; }
+.cs-toast__ring {
+  position: absolute; inset: 0;
+  width: 30px; height: 30px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  overflow: visible;
+}
+.cs-toast__ring circle { fill: none; }
+.cs-toast__ring-track { stroke: var(--border); stroke-width: 2; }
+.cs-toast__ring-prog {
+  stroke: var(--mint); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 81.68; stroke-dashoffset: 0;
+}
+@keyframes cs-toast-deplete {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 81.68; }
+}
+.cs-toast.is-counting .cs-toast__ring-prog {
+  animation: cs-toast-deplete 8s linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-toast { transition: opacity var(--dur-base) var(--ease-out); transform: none; }
+  .cs-toast.is-in { transform: none; }
+  .cs-toast.is-counting .cs-toast__ring-prog { animation: none; stroke-dashoffset: 81.68; }
+}
+
+/* ============================================================
    Page layout — sticky side index + content
    ============================================================ */
 .cs-shell {
@@ -2057,6 +2159,21 @@ body, .lp-nav, .lp-chip, .lp-project__media,
     </nav>
   </div>
 
+  <div class="cs-toast" id="themeToast" role="status" aria-live="polite" hidden>
+    <span class="cs-toast__arrow" aria-hidden="true"></span>
+    <span class="cs-toast__icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"></path></svg>
+    </span>
+    <div class="cs-toast__body">
+      <p class="cs-toast__title">Light / Dark themed project.</p>
+      <p class="cs-toast__hint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 5"></path></svg>Toggle to see both themes.</p>
+    </div>
+    <button type="button" class="cs-toast__close" id="themeToastClose" aria-label="Dismiss notification">
+      <svg class="cs-toast__ring" viewBox="0 0 30 30" aria-hidden="true"><circle class="cs-toast__ring-track" cx="15" cy="15" r="13"></circle><circle class="cs-toast__ring-prog" cx="15" cy="15" r="13"></circle></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+  </div>
+
   <main>
     <div class="cs-shell">
       <aside class="cs-index" aria-label="On this page">
@@ -2089,7 +2206,8 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           </div>
 
           <div class="cs-hero__cover cs-redbg lp-reveal" data-delay="3">
-            <div class="cs-ph"><span>Justride — multi-viewport ticketing · browser + native</span></div>
+            <img class="cs-shot cs-shot--light" src="../assets/project-justride-hero-light.png" alt="Justride multi-viewport ticketing across browser and native mobile">
+            <img class="cs-shot cs-shot--dark" src="../assets/project-justride-hero-dark.png" alt="" aria-hidden="true">
           </div>
         </section>
 
@@ -2113,7 +2231,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
         </section>
 
         <figure class="cs-bigfig lp-reveal">
-          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Context — platform overview &amp; rider landscape</span></div></div>
+          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-context-light.png" alt="Justride platform overview and rider landscape"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-context-dark.png" alt="" aria-hidden="true"></div>
         </figure>
 
         <section class="cs-section" id="process">
@@ -2181,11 +2299,11 @@ body, .lp-nav, .lp-chip, .lp-project__media,
                 <h3 class="cs-screen__h">A Figma variables system that makes theming fast and testable.</h3>
                 <p class="cs-screen__p">Agencies can brand and deploy the platform as their own without rebuilding from scratch. A variables-driven theming system makes every customisation fast to apply and easy to validate before it ships.</p>
               </div>
-              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Figma variables — agency theming system</span></div></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-theming-light.png" alt="Figma variables agency theming system"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-theming-dark.png" alt="" aria-hidden="true"></div>
             </article>
 
             <article class="cs-screen cs-screen--flip lp-reveal">
-              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Responsive — browser + native viewports</span></div></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-responsive-light.png" alt="Responsive Justride across browser and native viewports"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-responsive-dark.png" alt="" aria-hidden="true"></div>
               <div class="cs-screen__notes">
                 <span class="cs-screen__tag">Responsive, multi-viewport</span>
                 <h3 class="cs-screen__h">One experience, consistent across browser and native.</h3>
@@ -2199,13 +2317,13 @@ body, .lp-nav, .lp-chip, .lp-project__media,
                 <h3 class="cs-screen__h">Light and dark themes that stay fully usable.</h3>
                 <p class="cs-screen__p">Accessibility is baked into the approach rather than retrofitted, so both light and dark themes remain fully usable no matter how an agency customises them.</p>
               </div>
-              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Light &amp; dark — accessible by default</span></div></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-a11y-light.png" alt="Accessible light and dark themes by default"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-a11y-dark.png" alt="" aria-hidden="true"></div>
             </article>
           </div>
         </section>
 
         <figure class="cs-bigfig lp-reveal">
-          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Solution — white-label system across viewports</span></div></div>
+          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-solution-light.png" alt="White-label Justride system across viewports"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-solution-dark.png" alt="" aria-hidden="true"></div>
         </figure>
 
         <section class="cs-section" id="impact">
@@ -2339,6 +2457,86 @@ body, .lp-nav, .lp-chip, .lp-project__media,
       });
     }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
     spyTargets.forEach(function (el) { spyIO.observe(el); });
+
+    /* ----------------------------------------------------------
+       Theme-availability toast
+       - triggers at 30% scroll via IntersectionObserver sentinel
+       - points at the theme toggle, repositions on resize
+       - depleting ring auto-dismisses after 8s
+       - sessionStorage: shows once per browser session
+       ---------------------------------------------------------- */
+    (function () {
+      var TOAST_KEY = 'la-toast-theme-dismissed';
+      var toast = document.getElementById('themeToast');
+      if (!toast || !toggle) return;
+      try { if (sessionStorage.getItem(TOAST_KEY)) return; } catch (e) {}
+
+      var closeBtn = document.getElementById('themeToastClose');
+      var arrow = toast.querySelector('.cs-toast__arrow');
+      var shown = false, dismissed = false, autoTimer = null;
+
+      function position() {
+        var r = toggle.getBoundingClientRect();
+        toast.style.top = Math.round(r.bottom + 12) + 'px';
+        if (window.matchMedia('(max-width: 640px)').matches) {
+          /* Mobile: span the full content column. */
+          var col = document.querySelector('.cs-content') || document.querySelector('.cs-shell');
+          var cr = col.getBoundingClientRect();
+          toast.style.left = Math.round(cr.left) + 'px';
+          toast.style.right = Math.round(window.innerWidth - cr.right) + 'px';
+          toast.style.width = 'auto';
+          /* Keep the arrow under the toggle's centre. */
+          var fromRight = cr.right - (r.left + r.width / 2) - 6.5;
+          arrow.style.right = Math.max(12, Math.round(fromRight)) + 'px';
+        } else {
+          toast.style.left = 'auto';
+          toast.style.width = '';
+          toast.style.right = Math.max(16, Math.round(window.innerWidth - r.right)) + 'px';
+          arrow.style.right = Math.max(12, Math.round(r.width / 2 - 6.5)) + 'px';
+        }
+      }
+
+      function dismiss() {
+        if (dismissed) return;
+        dismissed = true;
+        if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+        try { sessionStorage.setItem(TOAST_KEY, '1'); } catch (e) {}
+        toast.classList.remove('is-in');
+        window.removeEventListener('resize', position);
+        setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 360);
+      }
+
+      function show() {
+        if (shown || dismissed) return;
+        shown = true;
+        toast.hidden = false;
+        position();
+        window.addEventListener('resize', position);
+        requestAnimationFrame(function () {
+          toast.classList.add('is-in');
+          requestAnimationFrame(function () { toast.classList.add('is-counting'); });
+        });
+        autoTimer = setTimeout(dismiss, 8000);
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', dismiss);
+
+      /* 30%-of-page sentinel, observed against the viewport. */
+      if (getComputedStyle(document.body).position === 'static') {
+        document.body.style.position = 'relative';
+      }
+      var sentinel = document.createElement('div');
+      sentinel.setAttribute('aria-hidden', 'true');
+      sentinel.style.cssText = 'position:absolute;top:30%;left:0;width:1px;height:1px;pointer-events:none;';
+      document.body.appendChild(sentinel);
+
+      var toastIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { show(); toastIO.disconnect(); }
+        });
+      }, { threshold: 0 });
+      toastIO.observe(sentinel);
+    })();
   })();
   </script>
 </body>
