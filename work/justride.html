@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Masabi (Justride) — Case Study · Lander Arregi</title>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/favicon.png">
   <meta name="description" content="Redesigning Justride — a global white-label transit ticketing platform serving 3–5 million monthly riders, mobile-first and accessibility-driven.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +19,8 @@
       if (pref !== 'dark' && pref !== 'light') pref = 'light';
       document.documentElement.setAttribute('data-theme', pref);
       document.documentElement.setAttribute('data-theme-pref', pref);
+      /* Own the screen with the loader until content is ready. */
+      document.documentElement.classList.add('is-loading');
       /* Land at the top header on open/return — stop the browser from
          restoring the previous scroll position. */
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -2173,9 +2177,64 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 .cs-impact-group__label { font-size:12px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--mint-ink); margin:0 0 6px; }
 :root[data-theme="dark"] .cs-impact-group__label { color: var(--mint); }
 
+.lp-edge-info b { color: var(--fg); font-weight: 600; }
+
+/* ============================================================
+   Page loader — blurred ambient backdrop, centered brand mark,
+   determinate ease-out progress ring. Theme-aware via tokens.
+   ============================================================ */
+.lp-loader {
+  position: fixed; inset: 0; z-index: 1000;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 58%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(1.18);
+  backdrop-filter: blur(28px) saturate(1.18);
+  overflow: hidden;
+  transition: opacity 700ms var(--ease-out), visibility 700ms var(--ease-out);
+}
+/* Keep a solid theme base behind the frosted overlay (no flash before paint). */
+html { background: var(--bg); }
+.lp-loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.lp-loader__glow {
+  position: absolute; width: min(60vw, 540px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--mint) 42%, transparent) 0%, transparent 68%);
+  filter: blur(72px); opacity: 0.5;
+  animation: lp-loader-breathe 3.4s var(--ease-in-out) infinite;
+}
+:root[data-theme="dark"] .lp-loader__glow { opacity: 0.42; }
+.lp-loader__core { position: relative; width: 124px; height: 124px; display: grid; place-items: center; }
+.lp-loader__ring { position: absolute; inset: 0; width: 124px; height: 124px; transform: rotate(-90deg); }
+.lp-loader__track { fill: none; stroke: var(--border); stroke-width: 2.5; opacity: 0.55; }
+.lp-loader__bar {
+  fill: none; stroke: var(--mint); stroke-width: 3; stroke-linecap: round;
+  stroke-dasharray: 326.726; stroke-dashoffset: 300.6;
+}
+.lp-loader__logo {
+  width: 56px; height: 56px; display: block;
+  animation: lp-loader-pulse 2.6s var(--ease-in-out) infinite;
+}
+@keyframes lp-loader-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes lp-loader-breathe { 0%, 100% { transform: scale(0.9); opacity: 0.4; } 50% { transform: scale(1.06); opacity: 0.58; } }
+html.is-loading, html.is-loading body { overflow: hidden; }
+html.is-loading body { height: 100%; }
+@media (prefers-reduced-motion: reduce) { .lp-loader__logo, .lp-loader__glow { animation: none; } }
+.lp-loader.no-js-hidden { display: none; }
+
   </style>
 </head>
 <body>
+  <div class="lp-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="lp-loader__glow" aria-hidden="true"></div>
+    <div class="lp-loader__core">
+      <svg class="lp-loader__ring" viewBox="0 0 124 124" aria-hidden="true">
+        <circle class="lp-loader__track" cx="62" cy="62" r="52"></circle>
+        <circle class="lp-loader__bar" cx="62" cy="62" r="52"></circle>
+      </svg>
+      <img class="lp-loader__logo" src="../assets/favicon.png" alt="" width="58" height="58">
+    </div>
+  </div>
+  <noscript><style>.lp-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style></noscript>
+
   <div class="lp-grain" aria-hidden="true"></div>
 
   <div class="cs-nav-wrap">
@@ -2239,7 +2298,6 @@ body, .lp-nav, .lp-chip, .lp-project__media,
           </div>
 
           <div class="cs-hero__cover cs-redbg lp-reveal" data-delay="3">
-            <div class="cs-ph"><span>Hero — multi-viewport ticketing across browser &amp; native</span></div>
             <img class="cs-shot cs-shot--light" src="../assets/project-justride-hero-light.png" alt="Justride multi-viewport ticketing across browser and native mobile" onerror="this.style.display='none'">
             <img class="cs-shot cs-shot--dark" src="../assets/project-justride-hero-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
           </div>
@@ -2265,7 +2323,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
         </section>
 
         <figure class="cs-bigfig lp-reveal">
-          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Context — platform overview &amp; rider landscape</span></div><img class="cs-shot cs-shot--light" src="../assets/project-justride-context-light.png" alt="Justride platform overview and rider landscape" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-context-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
+          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-context-light.png" alt="Justride platform overview and rider landscape" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-context-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
         </figure>
 
         <section class="cs-section" id="process">
@@ -2337,7 +2395,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
             </article>
 
             <article class="cs-screen cs-screen--flip lp-reveal">
-              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Responsive — Justride across browser &amp; native viewports</span></div><img class="cs-shot cs-shot--light" src="../assets/project-justride-responsive-light.png" alt="Responsive Justride across browser and native viewports" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-responsive-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-responsive-light.png" alt="Responsive Justride across browser and native viewports" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-responsive-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
               <div class="cs-screen__notes">
                 <span class="cs-screen__tag">Responsive, multi-viewport</span>
                 <h3 class="cs-screen__h">One experience, consistent across browser and native.</h3>
@@ -2351,13 +2409,13 @@ body, .lp-nav, .lp-chip, .lp-project__media,
                 <h3 class="cs-screen__h">Light and dark themes that stay fully usable.</h3>
                 <p class="cs-screen__p">Accessibility is baked into the approach rather than retrofitted, so both light and dark themes remain fully usable no matter how an agency customises them.</p>
               </div>
-              <div class="cs-screen__shot cs-redbg"><div class="cs-ph"><span>Accessibility — light &amp; dark themes by default</span></div><img class="cs-shot cs-shot--light" src="../assets/project-justride-a11y-light.png" alt="Accessible light and dark themes by default" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-a11y-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-a11y-light.png" alt="Accessible light and dark themes by default" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-a11y-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
             </article>
           </div>
         </section>
 
         <figure class="cs-bigfig lp-reveal">
-          <div class="cs-bigfig__shot cs-redbg"><div class="cs-ph"><span>Solution — white-label system across viewports</span></div><img class="cs-shot cs-shot--light" src="../assets/project-justride-solution-light.png" alt="White-label Justride system across viewports" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-solution-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
+          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-justride-solution-light.png" alt="White-label Justride system across viewports" onerror="this.style.display='none'"><img class="cs-shot cs-shot--dark" src="../assets/project-justride-solution-dark.png" alt="" aria-hidden="true" onerror="this.style.display='none'"></div>
         </figure>
 
         <section class="cs-section" id="impact">
@@ -2433,6 +2491,60 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   </main>
 
   <script>
+  /* ---- Page loader: determinate, ease-out progress ring ---- */
+  (function () {
+    var root = document.documentElement;
+    var loader = document.getElementById('pageLoader');
+    if (!loader) { root.classList.remove('is-loading'); return; }
+    var bar = loader.querySelector('.lp-loader__bar');
+    var CIRC = 2 * Math.PI * 52;
+    bar.style.strokeDasharray = CIRC;
+
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var startedAt = performance.now();
+    var MIN_MS = reduce ? 0 : 700;
+    var current = 0, target = 0.08, loaded = false, finishing = false;
+
+    var imgs = Array.prototype.slice.call(document.images);
+    var total = imgs.length, done = 0;
+    function bump() {
+      done++;
+      var frac = total ? done / total : 1;
+      target = Math.max(target, 0.12 + 0.78 * frac);
+    }
+    imgs.forEach(function (img) {
+      if (img.complete) { bump(); }
+      else { img.addEventListener('load', bump); img.addEventListener('error', bump); }
+    });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { target = Math.max(target, 0.55); });
+    }
+    window.addEventListener('load', function () { target = 1; loaded = true; });
+
+    function finish() {
+      finishing = true;
+      loader.classList.add('is-done');
+      root.classList.remove('is-loading');
+      setTimeout(function () {
+        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+      }, 750);
+    }
+
+    function frame(now) {
+      current += (target - current) * 0.085;
+      if (loaded && current > 0.997) current = 1;
+      bar.style.strokeDashoffset = CIRC * (1 - current);
+      if (current >= 0.999 && loaded) {
+        if (!finishing) setTimeout(finish, Math.max(0, MIN_MS - (now - startedAt)));
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    setTimeout(function () { target = 1; loaded = true; }, 8000);
+  })();
+
   (function () {
     var STORAGE_KEY = 'la-theme';
 
