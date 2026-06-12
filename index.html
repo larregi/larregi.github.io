@@ -294,8 +294,9 @@ body {
    ============================================================ */
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 html, body { margin: 0; padding: 0; }
+body { overflow-x: clip; max-width: 100%; }
 
 body {
   background: var(--bg);
@@ -353,8 +354,8 @@ body, .lp-nav, .lp-chip, .lp-project__media,
    ============================================================ */
 .lp-wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
 @media (max-width: 800px) {
-  .lp-wrap { padding: 0 22px; }
-  .lp-nav-wrap { padding: 18px 22px; }
+  .lp-wrap { padding: 0 24px; }
+  .lp-nav-wrap { padding: 16px 24px; }
 }
 
 .lp-section {
@@ -1434,6 +1435,7 @@ html.is-loading body { height: 100%; }
 .lp-loader.no-js-hidden { display: none; }
 
   </style>
+  <noscript><style>.lp-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style></noscript>
 </head>
 <body>
   <div class="lp-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading">
@@ -1446,7 +1448,6 @@ html.is-loading body { height: 100%; }
       <img class="lp-loader__logo" src="assets/favicon.png" alt="" width="58" height="58">
     </div>
   </div>
-  <noscript><style>.lp-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style></noscript>
 
   <div class="lp-grain" aria-hidden="true"></div>
 
@@ -1781,24 +1782,49 @@ html.is-loading body { height: 100%; }
     var MIN_MS = reduce ? 0 : 700;      /* hold long enough to read, never flash */
     var current = 0, target = 0.08, loaded = false, finishing = false;
 
-    /* Advance the target as real images decode. */
-    var imgs = Array.prototype.slice.call(document.images);
-    var total = imgs.length, done = 0;
-    function bump() {
-      done++;
-      var frac = total ? done / total : 1;
-      target = Math.max(target, 0.12 + 0.78 * frac);
+    /* Theme-aware lazy screenshots: each .cs-shot carries its file in data-src
+       and is activated only for the active theme, so the off-theme variant
+       never downloads until the user actually switches. */
+    function activateShots(isDark) {
+      var list = document.querySelectorAll('.cs-shot[data-src]');
+      for (var i = 0; i < list.length; i++) {
+        var s = list[i];
+        var dk = s.classList.contains('cs-shot--dark');
+        var lt = s.classList.contains('cs-shot--light');
+        if (((dk && isDark) || (lt && !isDark) || (!dk && !lt)) && !s.getAttribute('src')) {
+          s.src = s.getAttribute('data-src');
+        }
+      }
     }
-    imgs.forEach(function (img) {
-      if (img.complete) { bump(); }
-      else { img.addEventListener('load', bump); img.addEventListener('error', bump); }
+    window.__laActivateShots = activateShots;
+    activateShots(root.getAttribute('data-theme') === 'dark');
+
+    /* Gate the loader on just the first couple of content images (the hero and
+       the one after it) — not every screenshot on the page. The rest stream in
+       lazily once content is revealed. */
+    var content = Array.prototype.slice.call(document.images).filter(function (img) {
+      return !img.classList.contains('lp-loader__logo')
+          && !img.classList.contains('lp-nav__brand-logo')
+          && img.getAttribute('src');
+    });
+    var gate = content.slice(0, 2);
+    var total = gate.length, done = 0;
+    function settle() {
+      done++;
+      target = Math.max(target, 0.2 + 0.75 * (total ? done / total : 1));
+      if (done >= total) { target = 1; loaded = true; maybeFinish(); }
+    }
+    if (total === 0) { target = 1; loaded = true; }
+    gate.forEach(function (img) {
+      if (img.complete && img.naturalWidth > 0) { settle(); }
+      else { img.addEventListener('load', settle); img.addEventListener('error', settle); }
     });
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () { target = Math.max(target, 0.55); });
+      document.fonts.ready.then(function () { target = Math.max(target, 0.5); });
     }
-    window.addEventListener('load', function () { target = 1; loaded = true; });
 
     function finish() {
+      if (finishing) return;
       finishing = true;
       loader.classList.add('is-done');
       root.classList.remove('is-loading');
@@ -1806,12 +1832,20 @@ html.is-loading body { height: 100%; }
         if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
       }, 750);
     }
-
+    /* Finishing is gated entirely on the ring visually completing its round
+       (handled in frame()), so the loader never fades mid-spin. */
+    function maybeFinish() {}
     function frame(now) {
-      current += (target - current) * 0.085;          /* smooth ease toward target */
-      if (loaded && current > 0.997) current = 1;
+      if (loaded) {
+        /* Drive firmly to a full circle — proportional easing with a floor so
+           it always lands on 100%, never stalls asymptotically short. */
+        current += Math.max((1 - current) * 0.14, 0.014);
+      } else {
+        current += (target - current) * 0.085;
+      }
+      if (current > 1) current = 1;
       bar.style.strokeDashoffset = CIRC * (1 - current);
-      if (current >= 0.999 && loaded) {
+      if (loaded && current >= 1) {
         if (!finishing) setTimeout(finish, Math.max(0, MIN_MS - (now - startedAt)));
         return;
       }
@@ -1819,8 +1853,8 @@ html.is-loading body { height: 100%; }
     }
     requestAnimationFrame(frame);
 
-    /* Safety valve: never hold the page hostage. */
-    setTimeout(function () { target = 1; loaded = true; }, 8000);
+    /* Safety valve: never hold the page hostage if an image stalls. */
+    setTimeout(function () { target = 1; loaded = true; maybeFinish(); }, 5000);
   })();
 
   (function () {
@@ -1861,6 +1895,7 @@ html.is-loading body { height: 100%; }
       document.documentElement.setAttribute('data-theme', next);
       document.documentElement.setAttribute('data-theme-pref', next);
       localStorage.setItem(STORAGE_KEY, next);
+      if (window.__laActivateShots) window.__laActivateShots(next === 'dark');
       syncToggle();
     });
 
