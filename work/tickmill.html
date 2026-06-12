@@ -296,7 +296,7 @@ body {
    ============================================================ */
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 html, body { margin: 0; padding: 0; }
 
 body {
@@ -307,7 +307,8 @@ body {
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "ss01", "cv11";
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* Smooth global theme/variant cross-fade */
@@ -355,8 +356,8 @@ body, .lp-nav, .lp-chip, .lp-project__media,
    ============================================================ */
 .lp-wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
 @media (max-width: 800px) {
-  .lp-wrap { padding: 0 22px; }
-  .lp-nav-wrap { padding: 18px 22px; }
+  .lp-wrap { padding: 0 24px; }
+  .lp-nav-wrap { padding: 16px 24px; }
 }
 
 .lp-section {
@@ -1334,6 +1335,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 }
 .cs-nav__back {
   display: inline-flex; align-items: center; gap: 8px;
+  white-space: nowrap;
   font-size: 13px; font-weight: 500; color: var(--fg-1); text-decoration: none;
   padding: 8px 14px 8px 12px; border-radius: 9999px;
   background: var(--surface-alt);
@@ -1365,7 +1367,7 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   .cs-shell { grid-template-columns: 1fr; gap: 24px; padding-top: 120px; }
 }
 @media (max-width: 800px) {
-  .cs-shell { padding-left: 22px; padding-right: 22px; }
+  .cs-shell { padding-left: 24px; padding-right: 24px; }
 }
 
 /* ============================================================
@@ -1418,26 +1420,39 @@ body, .lp-nav, .lp-chip, .lp-project__media,
 
 @media (max-width: 1000px) {
   .cs-index {
-    position: sticky; top: 78px; z-index: 50;
-    flex-direction: row; gap: 4px; overflow-x: auto;
-    padding: 12px 4px;
-    margin: 0 -22px;
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
-    backdrop-filter: blur(14px);
+    position: sticky; top: 68px; z-index: 50;
+    flex-direction: row; gap: 0; overflow-x: auto;
+    padding: 14px 0;
+    margin: 0 -24px;
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    backdrop-filter: blur(16px) saturate(1.1);
     border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+    scroll-behavior: auto;
+    overscroll-behavior-x: contain;
   }
+  .cs-index::-webkit-scrollbar { display: none; }
   .cs-index__kicker { display: none; }
-  .cs-index__list { display: flex; gap: 4px; padding: 0 22px; }
+  .cs-index__list { display: flex; gap: 8px; padding: 0; align-items: center; }
   .cs-index__item {
     white-space: nowrap;
-    padding: 8px 14px; border-left: 0;
+    padding: 9px 16px; border-left: 0;
     border-radius: 9999px;
     background: var(--surface-alt);
+    font-size: 13px;
+    will-change: opacity;
+    transition: background-color 0.3s var(--ease-out), color 0.3s var(--ease-out);
   }
   .cs-index__item.is-active { background: var(--fg); color: var(--bg); }
   .cs-index__item.is-active::before { display: none; }
   .cs-index__item.is-active .cs-index__num { color: rgba(255,255,255,0.5); }
-  .cs-index__num { margin-right: 4px; }
+  .cs-index__num { margin-right: 5px; }
+}
+
+/* The pill carousel drives its own easing — disable native smooth scroll on touch widths */
+@media (max-width: 1000px) {
+  html { scroll-behavior: auto; }
 }
 
 /* ============================================================
@@ -2075,6 +2090,7 @@ html.is-loading body { height: 100%; }
 .lp-loader.no-js-hidden { display: none; }
 
   </style>
+  <noscript><style>.lp-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style></noscript>
 </head>
 <body>
   <div class="lp-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading">
@@ -2087,7 +2103,6 @@ html.is-loading body { height: 100%; }
       <img class="lp-loader__logo" src="../assets/favicon.png" alt="" width="58" height="58">
     </div>
   </div>
-  <noscript><style>.lp-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style></noscript>
 
   <div class="lp-grain" aria-hidden="true"></div>
 
@@ -2161,7 +2176,7 @@ html.is-loading body { height: 100%; }
         </section>
 
         <figure class="cs-bigfig lp-reveal">
-          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-context-light.png" alt="Tickmill platform overview and trader landscape"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-context-dark.png" alt="" aria-hidden="true"></div>
+          <div class="cs-bigfig__shot cs-redbg"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-context-light.png" alt="Tickmill platform overview and trader landscape" onerror="this.closest('.cs-bigfig').style.display='none'"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-context-dark.png" alt="" aria-hidden="true" onerror="this.closest('.cs-bigfig').style.display='none'"></div>
         </figure>
 
         <section class="cs-section" id="projects">
@@ -2219,19 +2234,19 @@ html.is-loading body { height: 100%; }
           <div class="cs-thumbs lp-reveal">
             <figure class="cs-thumb-card">
               <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">01</span><span class="cs-thumb-title">ID Documents — get ready</span></figcaption>
-              <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-1-light.png" alt="ID Documents — get ready"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-1-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-thumb"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-ob-1-light.png" alt="ID Documents — get ready"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-ob-1-dark.png" alt="" aria-hidden="true"></div>
             </figure>
             <figure class="cs-thumb-card">
               <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">02</span><span class="cs-thumb-title">NCI process — document type</span></figcaption>
-              <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-3-light.png" alt="NCI process — document type selection"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-3-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-thumb"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-ob-3-light.png" alt="NCI process — document type selection"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-ob-3-dark.png" alt="" aria-hidden="true"></div>
             </figure>
             <figure class="cs-thumb-card">
               <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">03</span><span class="cs-thumb-title">National identity card — capture</span></figcaption>
-              <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-4-light.png" alt="National identity card — capture screen"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-4-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-thumb"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-ob-4-light.png" alt="National identity card — capture screen"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-ob-4-dark.png" alt="" aria-hidden="true"></div>
             </figure>
             <figure class="cs-thumb-card">
               <figcaption class="cs-thumb-cap"><span class="cs-thumb-step">04</span><span class="cs-thumb-title">Document verification</span></figcaption>
-              <div class="cs-thumb"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-ob-2-light.png" alt="Document verification — proof of ID and address"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-ob-2-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-thumb"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-ob-2-light.png" alt="Document verification — proof of ID and address"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-ob-2-dark.png" alt="" aria-hidden="true"></div>
             </figure>
           </div>
         </section>
@@ -2247,11 +2262,11 @@ html.is-loading body { height: 100%; }
                 <h3 class="cs-screen__h">A regulatory gate that feels like a guided conversation.</h3>
                 <p class="cs-screen__p">The appropriateness assessment — required by financial regulators to verify trader knowledge — was redesigned with clear question framing, plain language and no dead ends. Traders understood where they were, what was being asked, and why.</p>
               </div>
-              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-apt-light.png" alt="Tickmill appropriateness test"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-apt-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-apt-light.png" alt="Tickmill appropriateness test"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-apt-dark.png" alt="" aria-hidden="true"></div>
             </article>
 
             <article class="cs-screen cs-screen--flip lp-reveal">
-              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-wal-light.png" alt="Tickmill wallets — deposit, withdraw and convert"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-wal-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-wal-light.png" alt="Tickmill wallets — deposit, withdraw and convert"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-wal-dark.png" alt="" aria-hidden="true"></div>
               <div class="cs-screen__notes">
                 <span class="cs-screen__tag">Wallets</span>
                 <h3 class="cs-screen__h">A unified view of funds that builds confidence.</h3>
@@ -2265,11 +2280,11 @@ html.is-loading body { height: 100%; }
                 <h3 class="cs-screen__h">Dense financial data made scannable for every user type.</h3>
                 <p class="cs-screen__p">A filterable, sortable record of all financial activity — built to serve a quick balance check and a detailed audit equally well. Smart defaults and strong information hierarchy reduced cognitive load across casual and professional traders alike.</p>
               </div>
-              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-trx-light.png" alt="Tickmill transaction history and filters"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-trx-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-trx-light.png" alt="Tickmill transaction history and filters"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-trx-dark.png" alt="" aria-hidden="true"></div>
             </article>
 
             <article class="cs-screen cs-screen--flip lp-reveal">
-              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" src="../assets/project-tickmill-tax-light.png" alt="Tickmill W-8BEN forms and document history"><img class="cs-shot cs-shot--dark" src="../assets/project-tickmill-tax-dark.png" alt="" aria-hidden="true"></div>
+              <div class="cs-screen__shot cs-redbg"><img class="cs-shot cs-shot--light" data-src="../assets/project-tickmill-tax-light.png" alt="Tickmill W-8BEN forms and document history"><img class="cs-shot cs-shot--dark" data-src="../assets/project-tickmill-tax-dark.png" alt="" aria-hidden="true"></div>
               <div class="cs-screen__notes">
                 <span class="cs-screen__tag">Documents</span>
                 <h3 class="cs-screen__h">Financial documents within reach, with enough context to act.</h3>
@@ -2343,23 +2358,49 @@ html.is-loading body { height: 100%; }
     var MIN_MS = reduce ? 0 : 700;
     var current = 0, target = 0.08, loaded = false, finishing = false;
 
-    var imgs = Array.prototype.slice.call(document.images);
-    var total = imgs.length, done = 0;
-    function bump() {
-      done++;
-      var frac = total ? done / total : 1;
-      target = Math.max(target, 0.12 + 0.78 * frac);
+    /* Theme-aware lazy screenshots: each .cs-shot carries its file in data-src
+       and is activated only for the active theme, so the off-theme variant
+       never downloads until the user actually switches. */
+    function activateShots(isDark) {
+      var list = document.querySelectorAll('.cs-shot[data-src]');
+      for (var i = 0; i < list.length; i++) {
+        var s = list[i];
+        var dk = s.classList.contains('cs-shot--dark');
+        var lt = s.classList.contains('cs-shot--light');
+        if (((dk && isDark) || (lt && !isDark) || (!dk && !lt)) && !s.getAttribute('src')) {
+          s.src = s.getAttribute('data-src');
+        }
+      }
     }
-    imgs.forEach(function (img) {
-      if (img.complete) { bump(); }
-      else { img.addEventListener('load', bump); img.addEventListener('error', bump); }
+    window.__laActivateShots = activateShots;
+    activateShots(root.getAttribute('data-theme') === 'dark');
+
+    /* Gate the loader on just the first couple of content images (the hero and
+       the one after it) — not every screenshot on the page. The rest stream in
+       lazily once content is revealed. */
+    var content = Array.prototype.slice.call(document.images).filter(function (img) {
+      return !img.classList.contains('lp-loader__logo')
+          && !img.classList.contains('lp-nav__brand-logo')
+          && img.getAttribute('src');
+    });
+    var gate = content.slice(0, 2);
+    var total = gate.length, done = 0;
+    function settle() {
+      done++;
+      target = Math.max(target, 0.2 + 0.75 * (total ? done / total : 1));
+      if (done >= total) { target = 1; loaded = true; maybeFinish(); }
+    }
+    if (total === 0) { target = 1; loaded = true; }
+    gate.forEach(function (img) {
+      if (img.complete && img.naturalWidth > 0) { settle(); }
+      else { img.addEventListener('load', settle); img.addEventListener('error', settle); }
     });
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () { target = Math.max(target, 0.55); });
+      document.fonts.ready.then(function () { target = Math.max(target, 0.5); });
     }
-    window.addEventListener('load', function () { target = 1; loaded = true; });
 
     function finish() {
+      if (finishing) return;
       finishing = true;
       loader.classList.add('is-done');
       root.classList.remove('is-loading');
@@ -2367,12 +2408,20 @@ html.is-loading body { height: 100%; }
         if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
       }, 750);
     }
-
+    /* Finishing is gated entirely on the ring visually completing its round
+       (handled in frame()), so the loader never fades mid-spin. */
+    function maybeFinish() {}
     function frame(now) {
-      current += (target - current) * 0.085;
-      if (loaded && current > 0.997) current = 1;
+      if (loaded) {
+        /* Drive firmly to a full circle — proportional easing with a floor so
+           it always lands on 100%, never stalls asymptotically short. */
+        current += Math.max((1 - current) * 0.14, 0.014);
+      } else {
+        current += (target - current) * 0.085;
+      }
+      if (current > 1) current = 1;
       bar.style.strokeDashoffset = CIRC * (1 - current);
-      if (current >= 0.999 && loaded) {
+      if (loaded && current >= 1) {
         if (!finishing) setTimeout(finish, Math.max(0, MIN_MS - (now - startedAt)));
         return;
       }
@@ -2380,7 +2429,8 @@ html.is-loading body { height: 100%; }
     }
     requestAnimationFrame(frame);
 
-    setTimeout(function () { target = 1; loaded = true; }, 8000);
+    /* Safety valve: never hold the page hostage if an image stalls. */
+    setTimeout(function () { target = 1; loaded = true; maybeFinish(); }, 5000);
   })();
 
   (function () {
@@ -2419,6 +2469,7 @@ html.is-loading body { height: 100%; }
       document.documentElement.setAttribute('data-theme', next);
       document.documentElement.setAttribute('data-theme-pref', next);
       localStorage.setItem(STORAGE_KEY, next);
+      if (window.__laActivateShots) window.__laActivateShots(next === 'dark');
       syncToggle();
     });
 
@@ -2431,8 +2482,14 @@ html.is-loading body { height: 100%; }
     revealEls.forEach(function (el) { revealIO.observe(el); });
 
     var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.cs-index__item'));
-    var spyTargets = spyLinks.map(function (a) { return document.getElementById(a.getAttribute('data-spy')); }).filter(Boolean);
+    var spyTargets = spyLinks.map(function (a) { return document.getElementById(a.getAttribute('data-spy')); });
+    var stripEl = document.querySelector('.cs-index');
+    var listEl  = document.querySelector('.cs-index__list');
+    var idxMq = window.matchMedia('(max-width: 1000px)');
+
+    /* Desktop: simple sticky-sidebar scrollspy (the mobile carousel owns active state) */
     var spyIO = new IntersectionObserver(function (entries) {
+      if (idxMq.matches) return;
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           var id = e.target.id;
@@ -2440,7 +2497,92 @@ html.is-loading body { height: 100%; }
         }
       });
     }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
-    spyTargets.forEach(function (el) { spyIO.observe(el); });
+    spyTargets.forEach(function (el) { if (el) spyIO.observe(el); });
+
+    /* Mobile: centred, two-way synced pill carousel.
+       - vertical page scroll drives the rail (active pill glides to centre)
+       - horizontally scrolling the rail drives the page to that section
+       - tapping eases the page (and rail) to the section
+       - off-centre pills fade out toward the edges */
+    (function () {
+      if (!stripEl || !listEl || !spyLinks.length) return;
+      var pills = spyLinks, secs = spyTargets, n = pills.length;
+      var on = false, lock = null, lockUntil = 0, raf = 0;
+      var anchors = [], targets = [];
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function cl(v,a,b){ return Math.max(a, Math.min(b, v)); }
+      function ease(x){ return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; }
+
+      function measure(){
+        var cw = stripEl.clientWidth;
+        listEl.style.paddingLeft  = Math.max(20, cw/2 - pills[0].offsetWidth/2) + 'px';
+        listEl.style.paddingRight = Math.max(20, cw/2 - pills[n-1].offsetWidth/2) + 'px';
+        var maxY = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        anchors = secs.map(function (s){ return s ? cl(s.offsetTop - window.innerHeight*0.34, 0, maxY) : 0; });
+        for (var i=1;i<n;i++) if (anchors[i] <= anchors[i-1]) anchors[i] = anchors[i-1] + 1;
+        var maxSL = Math.max(0, stripEl.scrollWidth - cw);
+        targets = pills.map(function (p){ return cl(p.offsetLeft + p.offsetWidth/2 - cw/2, 0, maxSL); });
+        for (var j=1;j<n;j++) if (targets[j] <= targets[j-1]) targets[j] = targets[j-1] + 0.5;
+      }
+      function lerp(a,f){ var i=Math.floor(f); if(i>=n-1) return a[n-1]; if(i<0) return a[0]; return a[i]+(a[i+1]-a[i])*(f-i); }
+      function inv(a,v){ if(v<=a[0]) return 0; if(v>=a[n-1]) return n-1; for(var i=0;i<n-1;i++) if(v<a[i+1]) return i+(v-a[i])/(a[i+1]-a[i]); return n-1; }
+      function paint(f){
+        var cw=stripEl.clientWidth, mid=cw/2, sl=stripEl.scrollLeft;
+        for (var i=0;i<n;i++){
+          var pc = pills[i].offsetLeft + pills[i].offsetWidth/2 - sl;
+          pills[i].style.opacity = cl(1 - (Math.abs(pc-mid)/(cw*0.42))*0.85, 0.3, 1).toFixed(3);
+        }
+        var ai = cl(Math.round(f),0,n-1);
+        for (var k=0;k<n;k++) pills[k].classList.toggle('is-active', k===ai);
+      }
+      function stripFromPage(){ var f=inv(anchors, window.scrollY); stripEl.scrollLeft = lerp(targets,f); paint(f); }
+      function pageFromStrip(){ var f=inv(targets, stripEl.scrollLeft); window.scrollTo(0, lerp(anchors,f)); paint(f); }
+      function onPage(){
+        if(!on) return; var now=performance.now();
+        if(lock==='strip' && now<lockUntil) return;
+        lock='page'; lockUntil=now+130;
+        stripFromPage();
+      }
+      function onStrip(){
+        if(!on) return; var now=performance.now();
+        if(lock==='page' && now<lockUntil) return;
+        lock='strip'; lockUntil=now+130; pageFromStrip();
+      }
+      function tween(toY){
+        var from=window.scrollY, d=toY-from, t0=performance.now(), dur=reduce?0:560;
+        lock='page';
+        (function step(now){
+          var k = dur ? Math.min(1,(now-t0)/dur) : 1;
+          lockUntil = performance.now()+200;
+          var y = from + d*ease(k);
+          window.scrollTo(0,y);
+          var f = inv(anchors,y); stripEl.scrollLeft = lerp(targets,f); paint(f);
+          if(k<1) requestAnimationFrame(step);
+        })(t0);
+      }
+      pills.forEach(function (p, idx){
+        p.addEventListener('click', function (e){
+          if(!on) return;
+          e.preventDefault();
+          measure(); tween(anchors[idx]);
+        });
+      });
+      function setOn(v){
+        if(v===on) return; on=v;
+        if(v){ measure(); stripFromPage(); }
+        else {
+          listEl.style.paddingLeft=''; listEl.style.paddingRight='';
+          pills.forEach(function(p){ p.style.opacity=''; });
+        }
+      }
+      window.addEventListener('scroll', onPage, { passive:true });
+      stripEl.addEventListener('scroll', onStrip, { passive:true });
+      window.addEventListener('resize', function(){ if(on){ measure(); stripFromPage(); } });
+      if (idxMq.addEventListener) idxMq.addEventListener('change', function(e){ setOn(e.matches); });
+      else if (idxMq.addListener) idxMq.addListener(function(e){ setOn(e.matches); });
+      window.addEventListener('load', function(){ if(on){ measure(); stripFromPage(); } });
+      setTimeout(function(){ setOn(idxMq.matches); }, 0);
+    })();
   })();
   </script>
 </body>
