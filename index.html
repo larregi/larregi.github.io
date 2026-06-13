@@ -469,6 +469,21 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   .lp-nav__links a:not(.lp-nav__ext) { display: none; }
 }
 
+/* Opaque nav surface on mobile — at narrow widths the pill sits directly
+   over dense hero copy; translucency let it bleed through. */
+@media (max-width: 860px) {
+  .lp-nav {
+    background: var(--surface);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-color: var(--border);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+  }
+  :root[data-theme="dark"] .lp-nav {
+    background: #1a1818;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+  }
+}
+
 /* Theme toggle — pill switch in nav */
 .lp-theme-toggle {
   appearance: none; border: 0; background: transparent; padding: 0; margin: 0;

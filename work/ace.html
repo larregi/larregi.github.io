@@ -1447,6 +1447,36 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   .cs-index__num { margin-right: 5px; }
 }
 
+/* --- Mobile nav hardening ---------------------------------------------
+   The floating back-pill and the section carousel are both fixed/sticky
+   translucent layers. On touch widths they were overlapping and the page
+   content bled through. Make both surfaces opaque and dock the carousel
+   cleanly below the pill so they never collide. -------------------------- */
+@media (max-width: 1000px) {
+  /* Sticky only travels within its grid AREA; the aside's row is ~64px tall,
+     so the carousel never pinned. Switch the shell to block flow on mobile so
+     the sticky strip can travel the full article height. */
+  .cs-shell { display: block; }
+  .cs-index { margin-bottom: 6px; }
+  .cs-nav-wrap { padding: 14px 16px; }
+  .cs-nav {
+    padding: 8px 10px 8px 16px;
+    background: var(--surface);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-color: var(--border);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+  }
+  :root[data-theme="dark"] .cs-nav {
+    background: #1a1818;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+  }
+  .cs-index {
+    top: 76px;
+    background: var(--bg);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+}
+
 /* The pill carousel drives its own easing — disable native smooth scroll on touch widths */
 @media (max-width: 1000px) {
   html { scroll-behavior: auto; }
