@@ -459,12 +459,14 @@ body, .lp-nav, .lp-chip, .lp-project__media,
   display: inline-flex; align-items: center; justify-content: center;
 }
 
-/* Mobile nav — collapse section links; keep brand (left) and
-   LinkedIn + theme switch (right). Pill spans full content width. */
+/* Mobile nav — unified with the case-study pill: brand (left) +
+   LinkedIn + theme switch (right). Section links
+   collapse so the pill stays clean; the LinkedIn shortcut stays. */
 @media (max-width: 720px) {
+  .lp-nav-wrap { padding: 14px 16px; }
   .lp-nav {
     width: 100%;
-    padding: 8px 10px 8px 18px;
+    padding: 8px 10px 8px 16px;
   }
   .lp-nav__links a:not(.lp-nav__ext) { display: none; }
 }
